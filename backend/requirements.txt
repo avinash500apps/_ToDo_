@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+SQLAlchemy
+databases
+alembic
+psycopg2-binary  # If using PostgreSQL
+mysqlclient  # If using MySQL
+sqlite  # If using SQLite

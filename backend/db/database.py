@@ -1,0 +1,12 @@
+from pymongo import MongoClient
+
+# MongoDB Connection
+client = MongoClient("mongodb://localhost:27017/")
+
+# Database
+db = client["MongodbPractice"]
+
+# Collection
+users_collection = db.get_collection("users")
+print("connected to database")
+task_collection= db.get_collection("tasks")
