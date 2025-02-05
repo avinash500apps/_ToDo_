@@ -8,5 +8,4 @@ db = client["MongodbPractice"]
 
 # Collection
 users_collection = db.get_collection("users")
-print("connected to database")
 task_collection= db.get_collection("tasks")

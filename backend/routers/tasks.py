@@ -12,7 +12,6 @@ router = APIRouter()
 
 @router.post("/task")
 def create_tasks(payload: Task):
-    print(payload)
     
     if payload.uid is None:
         payload.uid = str(uuid.uuid4())
@@ -28,9 +27,8 @@ def create_tasks(payload: Task):
         raise HTTPException(status_code=500, detail="Failed to create task")
 
 
-@router.get("/task/{task_id}")
+@router.get("/get-task/{task_id}")
 def get_task(task_id: str):
-    print("Fetching task with ID:", task_id)
     try:
         task = task_collection.find_one({"_id": ObjectId(task_id)}) 
         
@@ -46,7 +44,6 @@ def get_task(task_id: str):
   
 @router.put("/update-user/{task_id}")
 def update_user(task_id: str, user_data: Task):
-    print("task_id----", task_id)
     try:
         user_id_obj = ObjectId(task_id)
         

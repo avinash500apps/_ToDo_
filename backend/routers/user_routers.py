@@ -14,19 +14,16 @@ def create_user(payload:User):
         user_dict["_id"] = str(result.inserted_id) 
         return {"message": "User created successfully", "user": user_dict}
     except Exception as e:
-        print("e", e)
         raise HTTPException(status_code=500, detail=str(e))
     
 
 @router.get("/get-user/{user_id}")
 def get_user(user_id: str):
-    print("user_id----", user_id)
     try:
         user = users_collection.find_one({"_id": ObjectId(user_id)})
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid user_id")
     
-    print("user------", user)
     if user:
         user_id = str(user.get("_id"))
         return {"user_id": user_id, "name": user.get("name"), "email": user.get("email")}
@@ -36,7 +33,6 @@ def get_user(user_id: str):
 
 @router.put("/update-user/{user_id}")
 def update_user(user_id: str, user_data: User):
-    print("user_id----", user_id)
     try:
         user_id_obj = ObjectId(user_id)
        
@@ -57,7 +53,6 @@ def update_user(user_id: str, user_data: User):
 
 @router.delete("/delete-user/{user_id}")
 def delete_user(user_id: str):
-    print("user_id", user_id)
     try:
         user_id_obj = ObjectId(user_id)
         result = users_collection.delete_one({"_id": user_id_obj})
