@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex h-screen bg-gray-100">  
+    <div class="flex flex-row w-full">
+    <div class="w-80 bg-blue-900 text-white flex flex-col p-5 space-y-4">
+        <h2 class="text-xl mt-5 font-bold">Private</h2>
+        <nav class="flex flex-col space-y-2">
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>
+                    </svg>
+                    Home
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">6</span>
+            </a>
+              
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <!-- Home Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Completed
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">16</span>
+            </a>
+            
+                      
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <span class="mr-2">👤</span>
+                    Personal
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">10</span>
+            </a>
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <span class="mr-2">💼</span>
+                    Work
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">4</span>
+            </a>  
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <span class="mr-2">💪</span>
+                    Diet
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">2</span>
+            </a>  
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <span class="mr-2">📚</span>
+                    List of Books
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">18</span>
+            </a>  
+            <a href="#" class="py-4 px-4 rounded-lg hover:bg-blue-600 flex justify-between items-center">
+                <span class="flex items-center">
+                    <span class="mr-2">🚗</span>
+                    Road Trip List
+                </span>
+                <span class="bg-grey-500 text-white px-2 py-1 rounded-full text-s">6</span>
+            </a>  
+            <input type="text" placeholder="  +  Create new list" class="rounded-lg h-10 py-4 px-4">
+        </nav>
+        <h2 class="text-xl font-bold mt-5">Group</h2>
+        <nav class="flex flex-col space-y-2 mt-5">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center">
+                    <a href="#" class="py-4 px-4 rounded-sm">
+                        <img src="https://t4.ftcdn.net/jpg/04/85/39/87/360_F_485398728_aKL9duq8W78nnZ65BR3oGRMgari0sWEG.jpg" class="w-24 h-24 object-cover mx-auto rounded  hover:bg-white-600 ">
+                    </a>
+                    <p class="mt-0 text-sm">AgileCRM</p>
+                </div>
+                <div class="text-center">
+                    <a href="#" class="py-4 px-4 rounded-lg">
+                        <img src="https://static.vecteezy.com/system/resources/previews/035/974/483/non_2x/ai-generated-multi-ethnic-diverse-group-of-people-free-photo.jpg" alt="image2" class="w-24 h-24 object-cover mx-auto rounded">
+                    </a>
+                    <p class="mt-0 text-sm">AllRounder.io</p>
+                </div>
+            </div>
+            <input type="text" placeholder="  +  Create new group" class="rounded-lg h-10 py-4 px-4">
+        </nav>
+    </div>
+    <div class="flex-1">
+        {% include "body.html" %}
+    </div>
+    
+  </div>
+</div>
+</body>
+</html>

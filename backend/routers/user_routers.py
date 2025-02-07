@@ -64,5 +64,3 @@ def delete_user(user_id: str):
 
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid user_id")
-
-   

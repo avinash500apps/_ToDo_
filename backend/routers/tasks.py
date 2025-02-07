@@ -7,8 +7,33 @@ from datetime import datetime
 import uuid
 from fastapi import HTTPException
 from bson import ObjectId
+from pathlib import Path
 
 router = APIRouter()
+from fastapi import APIRouter, Request
+from fastapi.templating import Jinja2Templates
+
+# Get the absolute path to the templates folder
+BASE_DIR = Path(__file__).resolve().parent.parent  # This gets the 'backend' directory
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
+@router.get("/")
+def home(request: Request):
+    names = ["Avinash", "Vinay", "Rakesh", "Kalyan"]
+
+    data = {
+        "request": request,
+        "subject": "Welcome to Mantra!",
+        "greeting": names,
+        "message": "Thank you for joining Mantra. We are excited to have you onboard.",
+        "sender_name": "Mantra Technologies"
+    }
+    return templates.TemplateResponse("sidebar.html", {"request": request})
+
+@router.get("/popup")
+def popup(request: Request):
+    return templates.TemplateResponse("createtaskpopup.html", {"request": request})
+
 
 @router.post("/task")
 def create_tasks(payload: Task):

@@ -7,6 +7,6 @@ class Task(BaseModel):
     age:int
     department:str
     salary:float
-    due_date:datetime.datetime
+    due_date:datetime
     status: str = "New" 
     uid: str = None
