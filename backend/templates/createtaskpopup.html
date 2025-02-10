@@ -1,50 +1,101 @@
 <div class="bg-white p-6 rounded-lg shadow-lg w-96">
     <h2 class="text-xl font-bold text-center mb-4">Create New Task</h2>
 
-
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Select Date</label>
-        <input type="date"
+        <input type="date" id="datee"
             class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
     </div>
-
 
     <div class="grid grid-cols-2 gap-4 mb-4">
         <div>
             <label class="block text-sm font-medium text-gray-700">Start Time</label>
-            <input type="time"
+            <input type="time" id="start_time"
                 class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700">End Time</label>
-            <input type="time"
+            <input type="time" id="end_time"
                 class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
         </div>
     </div>
 
-
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Category</label>
-        <select class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            <option>Diet</option>
-            <option>Work</option>
-            <option>Personal</option>
-            <option>Completed</option>
-            <option>List of Books</option>
-            <option>Road Trip List</option>
+        <select id="category" class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="Diet">Diet</option>
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Completed">Completed</option>
+            <option value="List of Books">List of Books</option>
+            <option value="Road Trip List">Road Trip List</option>
         </select>
     </div>
 
-
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Task Name</label>
-        <input type="text" placeholder="Enter task name"
+        <input type="text" id="task_name" placeholder="Enter task name"
             class="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
     </div>
 
     <div class="flex justify-between">
-        <button class="w-32 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Reset</button>
-        <button class="w-32 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Save</button>
+        <button class="w-32 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500" onclick="resetData()"> Reset</button>
+        <button class="w-32 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" onclick="submitData()">Submit</button>
     </div>
-    
 </div>
+
+<!-- <script>
+ 
+    document.getElementById("submitData").addEventListener("click", async function(event) {
+        console.log("-----------")
+        event.preventDefault()
+
+        const date = document.getElementById("date").value
+        const startTime = document.getElementById("start_time").value
+        const endTime = document.getElementById("end_time").value
+        const category = document.getElementById("category").value
+        const taskName = document.getElementById("task_name").value
+
+        if (!date || !startTime || !endTime || !category || !taskName) {
+            alert("Please fill out all fields.")
+            return
+        }
+
+        const payload = {
+            date: new Date(date).toISOString(),
+            start_time: startTime,
+            end_time: endTime,
+            category: category,
+            task_name: taskName
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/createtask/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Task Created Successfully!")
+                console.log(data)
+                document.getElementById("date").value = ""
+                document.getElementById("start_time").value = ""
+                document.getElementById("end_time").value = ""
+                document.getElementById("category").value = "Diet"
+                document.getElementById("task_name").value = ""
+            } else {
+                alert("Error: " + data.detail)
+            }
+        } catch (error) {
+            console.error("Error:", error)
+            alert("Failed to create task.")
+        }
+    })
+
+
+</script> -->

@@ -1,6 +1,6 @@
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from backend.models.taskmodel import Task
+from backend.models.categorymodel import Task
 from backend.db.database import task_collection
 from fastapi import APIRouter, HTTPException
 from datetime import datetime

@@ -15,7 +15,8 @@
       <p id="date" class="mt-2 text-gray-700"></p>
     </div>
     <div class="flex space-x-4 items-center gap-6 mr-14">
-      <select class="block w-[120px] bg-white border border-gray-400 px-4 py-2 rounded focus:outline-none focus:shadow-outline">
+      <select
+        class="block w-[120px] bg-white border border-gray-400 px-4 py-2 rounded focus:outline-none focus:shadow-outline">
         <option>Today</option>
         <option>Tomorrow</option>
         <option>Yesterday</option>
@@ -28,20 +29,28 @@
   </div>
 
   <div>
-    <button id="openPopup" type="button" class="w-64 ml-20 flex items-center justify-center gap-2.5 text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-        Create New Task
+    <button id="openPopup" type="button"
+      class="w-64 ml-20 flex items-center justify-center gap-2.5 text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+        class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Create New Task
     </button>
   </div>
 
   <div id="popupModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-      <div class="">
-          <button id="closePopup" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">✖</button>
-          <div id="popupContent">Loading...</div>
-      </div>
+    <div class="">
+      <button id="closePopup" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">✖</button>
+      <div id="popupContent">Loading...</div>
+    </div>
   </div>
+
+  <div class="w-5/6 ml-20 mt-10 p-6 bg-white rounded shadow">
+    <h1 class="text-2xl font-bold mb-4 text-center">Task Details</h1>
+    <table id="tableData" class="min-w-full border-collapse border border-gray-300 text-center"></table>
+  </div>
+
 
   <script>
     function updateGreeting() {
@@ -69,31 +78,145 @@
     dateElement.textContent = `Today, ${formattedDate}`
 
     document.addEventListener("DOMContentLoaded", () => {
-        const openPopup = document.getElementById("openPopup")
-        const popupModal = document.getElementById("popupModal")
-        const popupContent = document.getElementById("popupContent")
-        const closePopup = document.getElementById("closePopup")
+      const openPopup = document.getElementById("openPopup")
+      const popupModal = document.getElementById("popupModal")
+      const popupContent = document.getElementById("popupContent")
+      const closePopup = document.getElementById("closePopup")
 
-        openPopup.addEventListener("click", () => {
-            fetch("/popup")
-                .then(response => response.text())
-                .then(data => {
-                    popupContent.innerHTML = data;
-                    popupModal.classList.remove("hidden")
-                })
-                .catch(error => console.error("Error loading popup:", error))
-        });
+      openPopup.addEventListener("click", () => {
+        fetch("/popup")
+          .then(response => response.text())
+          .then(data => {
+            popupContent.innerHTML = data;
+            popupModal.classList.remove("hidden")
+            console.log("==========", document.getElementById('submitData'))
+          })
+          .catch(error => console.error("Error loading popup:", error))
+      });
 
-        closePopup.addEventListener("click", () => {
-            popupModal.classList.add("hidden")
-        })
+      closePopup.addEventListener("click", () => {
+        popupModal.classList.add("hidden")
+      })
 
-        popupModal.addEventListener("click", (event) => {
-            if (event.target === popupModal) {
-                popupModal.classList.add("hidden")
-            }
-        })
+      popupModal.addEventListener("click", (event) => {
+        if (event.target === popupModal) {
+          popupModal.classList.add("hidden")
+        }
+      })
     })
+
+    async function submitData() {
+      console.log("-----------")
+
+      const date = document.getElementById("datee").value
+      console.log(date)
+      const startTime = document.getElementById("start_time").value
+      console.log(startTime)
+      const endTime = document.getElementById("end_time").value
+      console.log(endTime)
+      const category = document.getElementById("category").value
+      console.log(category)
+      const taskName = document.getElementById("task_name").value
+      console.log(taskName)
+
+      if (!date || !startTime || !endTime || !category || !taskName) {
+        alert("Please fill out all fields.")
+        return
+      }
+
+      const payload = {
+        date: new Date(date),
+        start_time: startTime,
+        end_time: endTime,
+        category: category,
+        task_name: taskName
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/createtask/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        })
+
+        const data = await response.json()
+        if (response.ok) {
+          alert("Task Created Successfully!")
+          console.log(data);
+          document.getElementById("date").value = ""
+          document.getElementById("start_time").value = ""
+          document.getElementById("end_time").value = ""
+          document.getElementById("category").value = "Diet"
+          document.getElementById("task_name").value = ""
+        } else {
+          alert("Error: " + data.detail)
+        }
+      } catch (error) {
+        console.error("Error:", error)
+        alert("Failed to create task.")
+      }
+    }
+
+    function resetData() {
+      console.log("resetttttttttttt")
+      document.getElementById("date").value = ""
+      document.getElementById("start_time").value = ""
+      document.getElementById("end_time").value = ""
+      document.getElementById("category").value = "Diet"
+      document.getElementById("task_name").value = ""
+    }
+
+    async function fetchTasks() {
+      try {
+        let response = await fetch("http://127.0.0.1:8000/get/task-list/")
+        let data = await response.json()
+        console.log("data------>", data)
+        populateTable(data.tasks)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      }
+    }
+
+    function populateTable(data) {
+      let table = document.getElementById("tableData")
+      table.innerHTML = `
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2">S.No</th>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Start Time</th>
+                        <th class="px-4 py-2">End Time</th>
+                        <th class="px-4 py-2">Category</th>
+                        <th class="px-4 py-2">Category Name</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    ${data.map((task, index) => `
+                        <tr class="border-b">
+    <td class="px-4 py-2">${index + 1}</td>
+    <td class="px-4 py-2">${task.date}</td>
+    <td class="px-4 py-2">${task.start_time}</td>
+    <td class="px-4 py-2">${task.end_time}</td>
+    <td class="px-4 py-2">${task.category}</td>
+    <td class="px-4 py-2">${task.task_name}</td>
+    <td class="px-4 py-2">
+        <button class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Update</button>
+        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2">Delete</button>
+    </td>
+</tr>
+
+                    `).join('')}
+                </tbody>
+            `;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchTasks();
+    });
   </script>
 
 </body>
