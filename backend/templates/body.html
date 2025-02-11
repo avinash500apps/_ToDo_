@@ -133,7 +133,7 @@
       }
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/createtask/", {
+        const response = await fetch("http://127.0.0.1:8000/categories", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -170,53 +170,76 @@
 
     async function fetchTasks() {
       try {
-        let response = await fetch("http://127.0.0.1:8000/get/task-list/")
+        let response = await fetch("http://127.0.0.1:8000/categories/")
         let data = await response.json()
         console.log("data------>", data)
-        populateTable(data.tasks)
+        populateTable(data.data)
       } catch (error) {
         console.error("Error fetching data:", error)
       }
     }
 
     function populateTable(data) {
-      let table = document.getElementById("tableData")
-      table.innerHTML = `
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="px-4 py-2">S.No</th>
-                        <th class="px-4 py-2">Date</th>
-                        <th class="px-4 py-2">Start Time</th>
-                        <th class="px-4 py-2">End Time</th>
-                        <th class="px-4 py-2">Category</th>
-                        <th class="px-4 py-2">Category Name</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    ${data.map((task, index) => `
-                        <tr class="border-b">
-    <td class="px-4 py-2">${index + 1}</td>
-    <td class="px-4 py-2">${task.date}</td>
-    <td class="px-4 py-2">${task.start_time}</td>
-    <td class="px-4 py-2">${task.end_time}</td>
-    <td class="px-4 py-2">${task.category}</td>
-    <td class="px-4 py-2">${task.task_name}</td>
-    <td class="px-4 py-2">
-        <button class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Update</button>
-        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2">Delete</button>
-    </td>
-</tr>
-
-                    `).join('')}
-                </tbody>
-            `;
-    }
+    let table = document.getElementById("tableData");
+    table.innerHTML = `
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="px-4 py-2">S.No</th>
+                <th class="px-4 py-2">Date</th>
+                <th class="px-4 py-2">Start Time</th>
+                <th class="px-4 py-2">End Time</th>
+                <th class="px-4 py-2">Category</th>
+                <th class="px-4 py-2">Task Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            ${data.map((task, index) => `
+                <tr id="row-${task._id}" class="border-b">
+                    <td class="px-4 py-2">${index + 1}</td>
+                    <td class="px-4 py-2">${task.date}</td>
+                    <td class="px-4 py-2">${task.start_time}</td>
+                    <td class="px-4 py-2">${task.end_time}</td>
+                    <td class="px-4 py-2">${task.category}</td>
+                    <td class="px-4 py-2">${task.task_name}</td>
+                    <td class="px-4 py-2">
+                        <button class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Update</button>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2" 
+                            onclick="deleteTask('${task._id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+}
 
     document.addEventListener("DOMContentLoaded", function () {
       fetchTasks();
-    });
+    })
+
+  
+    async function deleteTask(taskId) {
+    console.log("Deleting task:", taskId);
+
+    try {
+        let response = await fetch(`http://127.0.0.1:8000/categories/${taskId}`, {
+            method: "DELETE",
+        });
+
+        if (response.ok) {
+            console.log(`Task ${taskId} deleted successfully.`);
+            let row = document.getElementById(`row-${taskId}`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            console.error(`Failed to delete task ${taskId}:`, await response.text());
+        }
+    } catch (error) {
+        console.error("Error deleting task:", error);
+    }
+}
+
   </script>
 
 </body>

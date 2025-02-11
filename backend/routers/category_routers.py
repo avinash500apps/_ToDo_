@@ -1,38 +1,43 @@
-from fastapi import APIRouter
-from backend.models.categorymodel import CreateCategory, CreateTask,UpdateTask
-from backend.crud.crud import create_category,get_category,get_all_categories,create_task,get_all_task_list,get_task_list_by_id, update_task,delete_task
-from backend.db.database import task_collection
+from fastapi import APIRouter,Request
+from backend.crud.crud import create_document,get_document_by_id,get_all_documents,update_document,delete_document
+from backend.models.categorymodel import User, CreateCategory, CreateTask, UpdateTask
+from fastapi.templating import Jinja2Templates
+from pathlib import Path
+
 
 router = APIRouter()
 
-@router.post("/category-create/")
-def create_category_route(payload: CreateCategory):
-    return create_category(payload)
+# Get the absolute path to the templates folder
+BASE_DIR = Path(__file__).resolve().parent.parent 
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-@router.get("/category/{item_id}")
-def get_category_route(item_id: str):
-    return get_category(item_id)
+@router.get("/")
+def home(request: Request):
+    return templates.TemplateResponse("sidebar.html", {"request": request})
 
-@router.get("/categories")
-def get_all_categories_route():
-    return get_all_categories()
+@router.get("/popup")
+def popup(request: Request):
+    return templates.TemplateResponse("createtaskpopup.html", {"request": request})
 
-@router.post("/createtask/")
-def create_task_route(payload: CreateTask):
-    return create_task(payload)
+@router.post("/{collection_name}")
+async def create_item(collection_name: str, payload: User | CreateCategory | CreateTask):
+    return create_document(collection_name, payload)
 
-@router.get("/get/task-list/{task_id}")
-def get_task_list_by_id_route(task_id: str):
-    return get_task_list_by_id(task_id)
 
-@router.get("/get/task-list/")
-def get_all_task_list_route():
-    return get_all_task_list()
+@router.get("/{collection_name}/{item_id}")
+async def get_item(collection_name: str, item_id: str):
+    return get_document_by_id(collection_name, item_id)
 
-@router.put("/update-category/{category_id}")
-async def update_category(category_id: str, payload: UpdateTask):
-    return await update_task(category_id, payload)
 
-@router.delete("/tasks/{task_id}")
-async def delete_task_route(task_id: str):
-    return delete_task(task_id)
+@router.get("/{collection_name}")
+async def get_all_items(collection_name: str):
+    return get_all_documents(collection_name)
+
+@router.put("/{collection_name}/{item_id}")
+async def update_item(collection_name: str, item_id: str, payload: User | UpdateTask):
+    return update_document(collection_name, item_id, payload)
+
+
+@router.delete("/{collection_name}/{item_id}")
+async def delete_item(collection_name: str, item_id: str):
+    return delete_document(collection_name, item_id)
