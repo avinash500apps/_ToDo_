@@ -82,12 +82,15 @@
       const popupModal = document.getElementById("popupModal")
       const popupContent = document.getElementById("popupContent")
       const closePopup = document.getElementById("closePopup")
+      
 
       openPopup.addEventListener("click", () => {
           fetch("/popup")
               .then(response => response.text())
               .then(data => {
                   popupContent.innerHTML = data;
+                  const today = new Date().toISOString().split('T')[0]
+      const date = document.getElementById("datee").value=today
                   popupModal.classList.remove("hidden")
               })
               .catch(error => console.error("Error loading popup:", error))
@@ -108,7 +111,8 @@
 
 async function submitData() {
     
-    const date = document.getElementById("datee").value
+    const today = new Date().toISOString().split('T')[0]
+    const date = document.getElementById("datee").value=today
     const startTime = document.getElementById("start_time").value
     const endTime = document.getElementById("end_time").value
     const category = document.getElementById("category").value
