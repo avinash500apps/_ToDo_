@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Body</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="relative h-screen">
+<div>
   <div class="flex justify-between p-10 w-full">
     <div class="ml-12">
       <h1 id="greeting" class="text-3xl font-semibold"></h1>
@@ -51,196 +41,241 @@
     <table id="tableData" class="min-w-full border-collapse border border-gray-300 text-center"></table>
   </div>
 
+</div>
+<script>
 
-  <script>
-    function updateGreeting() {
+  let selectedTaskId = '';
+
+
+  function updateGreeting() {
       const greetingElement = document.getElementById("greeting")
       const now = new Date()
       const hours = now.getHours()
       let greetingText = "Good Morning"
 
-      if (hours >= 12 && hours < 18) {
-        greetingText = "Good Afternoon";
-      } else if (hours >= 18 || hours < 5) {
-        greetingText = "Good Evening";
+      if (hours >= 12 && hours < 16) {
+          greetingText = "Good Afternoon";
+      } else if (hours >= 16 || hours < 5) {
+          greetingText = "Good Evening";
       }
 
       greetingElement.innerHTML = `Hi, ${greetingText} Avinash <span class="mr-2">👋</span>`
-    }
+  }
 
-    document.addEventListener("DOMContentLoaded", updateGreeting)
+  document.addEventListener("DOMContentLoaded", updateGreeting)
 
-    const dateElement = document.getElementById("date")
-    const today = new Date()
+  const dateElement = document.getElementById("date")
+  const today = new Date()
 
-    const options = { weekday: "short", day: "numeric", month: "short", year: "numeric" }
-    const formattedDate = today.toLocaleDateString("en-GB", options)
-    dateElement.textContent = `Today, ${formattedDate}`
+  const options = { weekday: "short", day: "numeric", month: "short", year: "numeric" }
+  const formattedDate = today.toLocaleDateString("en-GB", options)
+  dateElement.textContent = `Today, ${formattedDate}`
 
-    document.addEventListener("DOMContentLoaded", () => {
+
+
+//   Eventlistener for open popup
+
+  document.addEventListener("DOMContentLoaded", () => {
+    
+
       const openPopup = document.getElementById("openPopup")
       const popupModal = document.getElementById("popupModal")
       const popupContent = document.getElementById("popupContent")
       const closePopup = document.getElementById("closePopup")
 
       openPopup.addEventListener("click", () => {
-        fetch("/popup")
-          .then(response => response.text())
-          .then(data => {
-            popupContent.innerHTML = data;
-            popupModal.classList.remove("hidden")
-            console.log("==========", document.getElementById('submitData'))
-          })
-          .catch(error => console.error("Error loading popup:", error))
+          fetch("/popup")
+              .then(response => response.text())
+              .then(data => {
+                  popupContent.innerHTML = data;
+                  popupModal.classList.remove("hidden")
+              })
+              .catch(error => console.error("Error loading popup:", error))
       });
 
       closePopup.addEventListener("click", () => {
-        popupModal.classList.add("hidden")
+          popupModal.classList.add("hidden")
       })
 
       popupModal.addEventListener("click", (event) => {
-        if (event.target === popupModal) {
-          popupModal.classList.add("hidden")
-        }
+          if (event.target === popupModal) {
+              popupModal.classList.add("hidden")
+          }
       })
-    })
+  })
 
-    async function submitData() {
-      console.log("-----------")
+// API integration for post and put call based on selectedtaskid
 
-      const date = document.getElementById("datee").value
-      console.log(date)
-      const startTime = document.getElementById("start_time").value
-      console.log(startTime)
-      const endTime = document.getElementById("end_time").value
-      console.log(endTime)
-      const category = document.getElementById("category").value
-      console.log(category)
-      const taskName = document.getElementById("task_name").value
-      console.log(taskName)
+async function submitData() {
+    
+    const date = document.getElementById("datee").value
+    const startTime = document.getElementById("start_time").value
+    const endTime = document.getElementById("end_time").value
+    const category = document.getElementById("category").value
+    const taskName = document.getElementById("task_name").value
 
-      if (!date || !startTime || !endTime || !category || !taskName) {
+    if (!date || !startTime || !endTime || !category || !taskName) {
         alert("Please fill out all fields.")
         return
-      }
+    }
 
-      const payload = {
+    const payload = {
         date: new Date(date),
         start_time: startTime,
         end_time: endTime,
         category: category,
         task_name: taskName
-      }
+    };
 
-      try {
-        const response = await fetch("http://127.0.0.1:8000/categories", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        })
+    try {
+        let response;
+        if (!selectedTaskId) {
+            response = await fetch("http://127.0.0.1:8000/create-document/categories", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            response = await fetch(`http://127.0.0.1:8000/update-document/categories/${selectedTaskId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+        }
 
         const data = await response.json()
         if (response.ok) {
-          alert("Task Created Successfully!")
-          console.log(data);
-          document.getElementById("date").value = ""
-          document.getElementById("start_time").value = ""
-          document.getElementById("end_time").value = ""
-          document.getElementById("category").value = "Diet"
-          document.getElementById("task_name").value = ""
+            alert(selectedTaskId ? "Task Updated Successfully!" : "Task Created Successfully!")
+            resetData()
+            selectedTaskId = ''
+            document.getElementById('task-title').textContent = "Create a New Task";
+            popupModal.classList.add("hidden")
+            fetchTasks()
         } else {
-          alert("Error: " + data.detail)
+            alert("Error: " + data.detail)
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error:", error)
-        alert("Failed to create task.")
-      }
+        alert("Failed to create/update task.")
     }
+}
 
-    function resetData() {
-      console.log("resetttttttttttt")
-      document.getElementById("date").value = ""
+
+// code for reset button
+
+  function resetData() {
+      document.getElementById("datee").value = ""
       document.getElementById("start_time").value = ""
       document.getElementById("end_time").value = ""
       document.getElementById("category").value = "Diet"
       document.getElementById("task_name").value = ""
-    }
+  }
 
-    async function fetchTasks() {
+// code for get call (API integration) and display in table
+
+  async function fetchTasks() {
       try {
-        let response = await fetch("http://127.0.0.1:8000/categories/")
-        let data = await response.json()
-        console.log("data------>", data)
-        populateTable(data.data)
+          let response = await fetch("http://127.0.0.1:8000/categories/")
+          let data = await response.json()
+          populateTable(data.data)
       } catch (error) {
-        console.error("Error fetching data:", error)
+          console.error("Error fetching data:", error)
       }
-    }
+  }
 
-    function populateTable(data) {
-    let table = document.getElementById("tableData");
-    table.innerHTML = `
-        <thead>
-            <tr class="bg-gray-200">
-                <th class="px-4 py-2">S.No</th>
-                <th class="px-4 py-2">Date</th>
-                <th class="px-4 py-2">Start Time</th>
-                <th class="px-4 py-2">End Time</th>
-                <th class="px-4 py-2">Category</th>
-                <th class="px-4 py-2">Task Name</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody class="bg-white">
-            ${data.map((task, index) => `
-                <tr id="row-${task._id}" class="border-b">
-                    <td class="px-4 py-2">${index + 1}</td>
-                    <td class="px-4 py-2">${task.date}</td>
-                    <td class="px-4 py-2">${task.start_time}</td>
-                    <td class="px-4 py-2">${task.end_time}</td>
-                    <td class="px-4 py-2">${task.category}</td>
-                    <td class="px-4 py-2">${task.task_name}</td>
-                    <td class="px-4 py-2">
-                        <button class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Update</button>
-                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2" 
-                            onclick="deleteTask('${task._id}')">Delete</button>
-                    </td>
-                </tr>
-            `).join('')}
-        </tbody>
-    `;
-}
+  function populateTable(data) {
+      let table = document.getElementById("tableData")
+      table.innerHTML = `
+          <thead>
+              <tr class="bg-gray-200">
+                  <th class="px-4 py-2">S.No</th>
+                  <th class="px-4 py-2">Date</th>
+                  <th class="px-4 py-2">Start Time</th>
+                  <th class="px-4 py-2">End Time</th>
+                  <th class="px-4 py-2">Category</th>
+                  <th class="px-4 py-2">Task Name</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody class="bg-white">
+              ${data.map((task, index) => `
+                  <tr id="row-${task._id}" class="border-b">
+                      <td class="px-4 py-2">${index + 1}</td>
+                      <td class="px-4 py-2">${task.date}</td>
+                      <td class="px-4 py-2">${task.start_time}</td>
+                      <td class="px-4 py-2">${task.end_time}</td>
+                      <td class="px-4 py-2">${task.category}</td>
+                      <td class="px-4 py-2">${task.task_name}</td>
+                      <td class="px-4 py-2">
+                          <button class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600" onclick="openUpdatePopup('${task._id}')">Update</button>
+                          <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2" onclick="deleteTask('${task._id}')">Delete</button>
+                      </td>
+                  </tr>
+              `).join('')}
+          </tbody>
+      `;
+  }
 
-    document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
       fetchTasks();
-    })
+  })
+
+  //   code for deleting the task from table(Delete API Integration)
+
+  async function deleteTask(taskId) {
+      try {
+          let response = await fetch(`http://127.0.0.1:8000/delete-document/categories/${taskId}`, {
+              method: "DELETE",
+          });
+
+          if (response.ok) {
+              let row = document.getElementById(`row-${taskId}`)
+              if (row) {
+                  row.remove()
+              }
+          } else {
+              console.error(`Failed to delete task ${taskId}:`, await response.text())
+          }
+      } catch (error) {
+          console.error("Error deleting task:", error)
+      }
+  }
+
+  function openUpdatePopup(taskId) {
+      fetch("/popup")
+          .then(response => response.text())
+          .then(data => {
+              document.getElementById("popupContent").innerHTML = data
+              fetch(`http://127.0.0.1:8000/categories/${taskId}`)
+                  .then(response => response.json())
+                  .then(task => {
+                      selectedTaskId = task.data._id
+                      document.getElementById('task-title').textContent = "Update Task";
+                      document.getElementById("record_id").value = taskId
+                      document.getElementById("datee").value = task.data.date ? task.data.date.split('T')[0] : ""
+                      document.getElementById("start_time").value = task.data.start_time || ""
+                      document.getElementById("end_time").value = task.data.end_time || "";
+                      document.getElementById("category").value = task.data.category || "Diet"
+                      document.getElementById("task_name").value = task.data.task_name || ""
+                  })
+                  .catch(error => console.error("Error loading task data:", error))
+
+              document.getElementById("popupModal").classList.remove("hidden")
+          })
+          .catch(error => console.error("Error loading popup:", error))
+  }
+  
+  document.getElementById("closePopup").addEventListener("click", () => {
+      document.getElementById("popupModal").classList.add("hidden")
+  })
 
   
-    async function deleteTask(taskId) {
-    console.log("Deleting task:", taskId);
+</script>
 
-    try {
-        let response = await fetch(`http://127.0.0.1:8000/categories/${taskId}`, {
-            method: "DELETE",
-        });
-
-        if (response.ok) {
-            console.log(`Task ${taskId} deleted successfully.`);
-            let row = document.getElementById(`row-${taskId}`);
-            if (row) {
-                row.remove();
-            }
-        } else {
-            console.error(`Failed to delete task ${taskId}:`, await response.text());
-        }
-    } catch (error) {
-        console.error("Error deleting task:", error);
-    }
-}
-
-  </script>
 
 </body>
 

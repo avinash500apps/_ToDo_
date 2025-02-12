@@ -20,17 +20,8 @@ class UpdateTask(BaseModel):
     category: Optional[str] = None
     task_name: Optional[str] = None
 
-
-class Task(BaseModel):
-    name: str
-    age:int
-    department:str
-    salary:float
-    due_date:datetime
-    status: str = "New" 
-    uid: str = None
-
 class User(BaseModel):
     name: str
     email: str
     phone: str
+

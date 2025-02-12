@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 COLLECTIONS = {
     "users": users_collection,
-    "categories": category_collection
+    "categories": category_collection,
 }
 
 
@@ -81,7 +81,7 @@ def update_document(collection_name: str, item_id: str, payload: BaseModel):
     
     if "start_time" in update_data:
         update_data["start_time"] = time_to_str(update_data["start_time"])
-        
+
     if "end_time" in update_data:
         update_data["end_time"] = time_to_str(update_data["end_time"])
 

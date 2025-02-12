@@ -1,6 +1,7 @@
 <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-xl font-bold text-center mb-4">Create New Task</h2>
+    <h2 class="text-xl font-bold text-center mb-4" id="task-title">Create New Task</h2>
 
+    <input type="text" id="record_id" value="0" />
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Select Date</label>
         <input type="date" id="datee"
@@ -43,59 +44,3 @@
         <button class="w-32 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" onclick="submitData()">Submit</button>
     </div>
 </div>
-
-<!-- <script>
- 
-    document.getElementById("submitData").addEventListener("click", async function(event) {
-        console.log("-----------")
-        event.preventDefault()
-
-        const date = document.getElementById("date").value
-        const startTime = document.getElementById("start_time").value
-        const endTime = document.getElementById("end_time").value
-        const category = document.getElementById("category").value
-        const taskName = document.getElementById("task_name").value
-
-        if (!date || !startTime || !endTime || !category || !taskName) {
-            alert("Please fill out all fields.")
-            return
-        }
-
-        const payload = {
-            date: new Date(date).toISOString(),
-            start_time: startTime,
-            end_time: endTime,
-            category: category,
-            task_name: taskName
-        };
-
-        try {
-            const response = await fetch("http://127.0.0.1:8000/createtask/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Task Created Successfully!")
-                console.log(data)
-                document.getElementById("date").value = ""
-                document.getElementById("start_time").value = ""
-                document.getElementById("end_time").value = ""
-                document.getElementById("category").value = "Diet"
-                document.getElementById("task_name").value = ""
-            } else {
-                alert("Error: " + data.detail)
-            }
-        } catch (error) {
-            console.error("Error:", error)
-            alert("Failed to create task.")
-        }
-    })
-
-
-</script> -->

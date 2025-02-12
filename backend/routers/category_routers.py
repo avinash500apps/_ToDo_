@@ -19,7 +19,7 @@ def home(request: Request):
 def popup(request: Request):
     return templates.TemplateResponse("createtaskpopup.html", {"request": request})
 
-@router.post("/{collection_name}")
+@router.post("/create-document/{collection_name}")
 async def create_item(collection_name: str, payload: User | CreateCategory | CreateTask):
     return create_document(collection_name, payload)
 
@@ -33,11 +33,11 @@ async def get_item(collection_name: str, item_id: str):
 async def get_all_items(collection_name: str):
     return get_all_documents(collection_name)
 
-@router.put("/{collection_name}/{item_id}")
+@router.put("/update-document/{collection_name}/{item_id}")
 async def update_item(collection_name: str, item_id: str, payload: User | UpdateTask):
     return update_document(collection_name, item_id, payload)
 
 
-@router.delete("/{collection_name}/{item_id}")
+@router.delete("/delete-document/{collection_name}/{item_id}")
 async def delete_item(collection_name: str, item_id: str):
     return delete_document(collection_name, item_id)
