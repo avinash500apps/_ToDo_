@@ -9,3 +9,4 @@ db = client["MongodbPractice"]
 # Collection
 users_collection = db.get_collection("users")
 category_collection=db.get_collection("category")
+task_collection=db.get_collection("tasks")

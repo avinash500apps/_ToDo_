@@ -1,8 +1,9 @@
 from fastapi import APIRouter,Request
 from backend.crud.crud import create_document,get_document_by_id,get_all_documents,update_document,delete_document
-from backend.models.categorymodel import User, CreateCategory, CreateTask, UpdateTask
+from backend.models.model import User, CreateCategory, CreateTask, UpdateTask, Tasks, UpdateTasks
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
+from typing import Union
 
 
 router = APIRouter()
@@ -20,7 +21,7 @@ def popup(request: Request):
     return templates.TemplateResponse("createtaskpopup.html", {"request": request})
 
 @router.post("/create-document/{collection_name}")
-async def create_item(collection_name: str, payload: User | CreateCategory | CreateTask):
+async def create_item(collection_name: str, payload: User | CreateCategory | CreateTask | Tasks | UpdateTasks):
     return create_document(collection_name, payload)
 
 
@@ -33,8 +34,9 @@ async def get_item(collection_name: str, item_id: str):
 async def get_all_items(collection_name: str):
     return get_all_documents(collection_name)
 
+
 @router.put("/update-document/{collection_name}/{item_id}")
-async def update_item(collection_name: str, item_id: str, payload: User | UpdateTask):
+async def update_item(collection_name: str, item_id: str, payload: dict):
     return update_document(collection_name, item_id, payload)
 
 

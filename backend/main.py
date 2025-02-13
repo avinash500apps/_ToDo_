@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from backend.routers import category_routers
+from backend.routers import routers
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-app.include_router(category_routers.router)
+app.include_router(routers.router)
 
 app.add_middleware(
     CORSMiddleware,

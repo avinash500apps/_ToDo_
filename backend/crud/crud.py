@@ -1,18 +1,25 @@
-from backend.db.database import users_collection, category_collection
+from backend.db.database import users_collection, category_collection,task_collection
 from bson import ObjectId
 from fastapi import HTTPException
 from datetime import time
 from pydantic import BaseModel
+from backend.models.model import UpdateTask
 
 
 COLLECTIONS = {
     "users": users_collection,
     "categories": category_collection,
+    "tasks":task_collection
 }
 
 
+from datetime import datetime, time
+
 def time_to_str(t: time) -> str:
+    if isinstance(t, str):
+        t = datetime.strptime(t, "%H:%M:%S").time()
     return t.strftime("%H:%M:%S") if t else None
+
 
 def create_document(collection_name: str, payload: BaseModel):
     if collection_name not in COLLECTIONS:
@@ -68,17 +75,19 @@ def get_all_documents(collection_name: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def update_document(collection_name: str, item_id: str, payload: BaseModel):
+def update_document(collection_name: str, item_id: str, payload: dict):
     if collection_name not in COLLECTIONS:
         raise HTTPException(status_code=400, detail="Invalid collection name")
 
     collection = COLLECTIONS[collection_name]
 
-    update_data = payload.dict(exclude_unset=True)
+    update_data = payload
+    print("update-data",update_data)
 
     if not update_data:
         raise HTTPException(status_code=400, detail="No valid fields provided for update")
-    
+
+    # Format time fields if present
     if "start_time" in update_data:
         update_data["start_time"] = time_to_str(update_data["start_time"])
 
@@ -86,6 +95,7 @@ def update_document(collection_name: str, item_id: str, payload: BaseModel):
         update_data["end_time"] = time_to_str(update_data["end_time"])
 
     try:
+        # Attempt the update operation
         update_result = collection.update_one({"_id": ObjectId(item_id)}, {"$set": update_data})
 
         if update_result.matched_count == 0:
@@ -94,6 +104,8 @@ def update_document(collection_name: str, item_id: str, payload: BaseModel):
         return {"message": f"{collection_name.capitalize()} updated successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
     
 
 def delete_document(collection_name: str, item_id: str):

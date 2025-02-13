@@ -25,3 +25,8 @@ class User(BaseModel):
     email: str
     phone: str
 
+class Tasks(BaseModel):
+    name:str
+
+class UpdateTasks(BaseModel):
+    name: Optional[str] = None
