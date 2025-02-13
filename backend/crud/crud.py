@@ -12,14 +12,8 @@ COLLECTIONS = {
     "tasks":task_collection
 }
 
-
-from datetime import datetime, time
-
 def time_to_str(t: time) -> str:
-    if isinstance(t, str):
-        t = datetime.strptime(t, "%H:%M:%S").time()
     return t.strftime("%H:%M:%S") if t else None
-
 
 def create_document(collection_name: str, payload: BaseModel):
     if collection_name not in COLLECTIONS:
@@ -87,13 +81,6 @@ def update_document(collection_name: str, item_id: str, payload: dict):
     if not update_data:
         raise HTTPException(status_code=400, detail="No valid fields provided for update")
 
-    # Format time fields if present
-    if "start_time" in update_data:
-        update_data["start_time"] = time_to_str(update_data["start_time"])
-
-    if "end_time" in update_data:
-        update_data["end_time"] = time_to_str(update_data["end_time"])
-
     try:
         # Attempt the update operation
         update_result = collection.update_one({"_id": ObjectId(item_id)}, {"$set": update_data})
@@ -105,8 +92,6 @@ def update_document(collection_name: str, item_id: str, payload: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-    
 
 def delete_document(collection_name: str, item_id: str):
     if collection_name not in COLLECTIONS:
