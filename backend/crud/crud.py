@@ -3,7 +3,8 @@ from bson import ObjectId
 from fastapi import HTTPException
 from datetime import time
 from pydantic import BaseModel
-from backend.models.model import UpdateTask
+from backend.models.model import UpdateTask, User
+from backend.utils.utils import hash_password,create_access_token
 
 
 COLLECTIONS = {
@@ -22,6 +23,15 @@ def create_document(collection_name: str, payload: BaseModel):
     collection = COLLECTIONS[collection_name]
     document = payload.dict()
 
+    if collection_name == "users":
+        existing_user = users_collection.find_one({
+            "email":payload.email
+        })
+        if existing_user:
+            raise HTTPException(status_code=400, detail="User already exists!")
+
+        document["password"] = hash_password(payload.password)
+
     if "start_time" in document:
         document["start_time"] = time_to_str(document["start_time"])
     if "end_time" in document:
@@ -30,9 +40,15 @@ def create_document(collection_name: str, payload: BaseModel):
     try:
         result = collection.insert_one(document)
         document["_id"] = str(result.inserted_id)
-        return {"message": f"{collection_name.capitalize()} created successfully", "data": document}
+
+        access_token = None
+        if collection_name == "users":
+            access_token = create_access_token(data={"email": payload.email})
+            
+        return {"message": f"{collection_name.capitalize()} created successfully", "data": document , "token": access_token}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 def get_document_by_id(collection_name: str, item_id: str):
@@ -49,7 +65,6 @@ def get_document_by_id(collection_name: str, item_id: str):
         return {"message": f"{collection_name.capitalize()} retrieved successfully", "data": item}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 def get_all_documents(collection_name: str):
@@ -76,7 +91,6 @@ def update_document(collection_name: str, item_id: str, payload: dict):
     collection = COLLECTIONS[collection_name]
 
     update_data = payload
-    print("update-data",update_data)
 
     if not update_data:
         raise HTTPException(status_code=400, detail="No valid fields provided for update")
