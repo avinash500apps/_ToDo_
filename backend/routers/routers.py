@@ -5,8 +5,10 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from typing import Union
 from fastapi import APIRouter, HTTPException, Depends
-from backend.utils.utils import create_access_token,verify_password
+from backend.utils.utils import create_access_token,verify_password,verify_access_token
 from backend.db.database import users_collection
+from fastapi import Response
+from datetime import timedelta
 
 
 router = APIRouter()
@@ -23,21 +25,48 @@ def home(request: Request):
 def home(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
+# @router.post("/login")
+# async def login(payload: LoginRequest):
+#     user = users_collection.find_one({"email": payload.email})
+
+#     if not user or not verify_password(payload.password, user["password"]):
+#         raise HTTPException(status_code=400, detail="Invalid email or password")
+
+#     access_token = create_access_token(data={"email": user["email"]})
+#     firstname = user.get("first_name")
+#     email=user.get("email")
+#     return {"access_token": access_token, "firstname": firstname ,"email":email, "message": "Login successful"}
+
 @router.post("/login")
-async def login(payload: LoginRequest):
+async def login(payload: LoginRequest, response: Response):
     user = users_collection.find_one({"email": payload.email})
 
     if not user or not verify_password(payload.password, user["password"]):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    access_token = create_access_token(data={"email": user["email"]})
-    return {"token": access_token, "message": "Login successful"}
+    access_token = create_access_token(data={"email": user["email"], "password": user["password"]}, expires_delta=timedelta(hours=1))
 
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True, 
+        secure=True, 
+        samesite="Lax",  
+    )
+    return {"message": "Login successful","access_token":access_token, "firstname": user.get("first_name"), "email": user.get("email")}
+
+@router.get("/protected")
+async def protected_route(token_data: dict = Depends(verify_access_token)):
+    return {"message": "You are authenticated", "user": token_data}
 
 
 @router.get("/sidebar")
 def home(request: Request):
     return templates.TemplateResponse("sidebar.html", {"request": request})
+
+@router.get("/profile")
+def home(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
 
 @router.get("/popup")
 def popup(request: Request):

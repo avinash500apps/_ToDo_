@@ -3,6 +3,9 @@ from datetime import datetime as dt, timedelta
 from typing import Optional
 from jwt import ExpiredSignatureError, PyJWTError
 from passlib.context import CryptContext
+from fastapi import Request, HTTPException
+from jose import JWTError, jwt
+
 
 SECRET_KEY = "gafaysgwhw"
 ALGORITHM = "HS256"
@@ -22,10 +25,22 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def verify_access_token(token: str):
+def verify_access_token(request: Request):
+    token = request.cookies.get("access_token")
+
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except ExpiredSignatureError:
-        raise Exception("Token has expired")
-    except PyJWTError:
-        raise Exception("Invalid token")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("email")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+

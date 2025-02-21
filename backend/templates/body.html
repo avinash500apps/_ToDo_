@@ -14,19 +14,16 @@
         </select>
 
         <div class="relative inline-block group">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-8 h-8 cursor-pointer text-gray-600 group-hover:text-gray-800">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            <svg id="profileicon" class="w-8 h-8 cursor-pointer text-gray-600 group-hover:text-gray-800" 
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M12 2a5 5 0 100 10 5 5 0 000-10zM4 20a8 8 0 1116 0H4z" clip-rule="evenodd" />
             </svg>
-
-            <div
-                class="absolute left-1/2 transform -translate-x-1/2 bg-white shadow-lg p-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-gray-700 text-sm w-32 text-center mt-2">
-                <p id="profileName" class="font-medium border-b border-gray-300 pb-2">Avinash</p>
-                <p id="signOutBtn" class="text-red-500 font-semibold cursor-pointer hover:text-red-600 pt-2">
-                    Sign Out
-                </p>
+        
+            <div class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max px-2 py-1 text-sm text-gray-700 bg-white  rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                Profile Settings
             </div>
         </div>
+        
     </div>
 </div>
 
@@ -43,12 +40,13 @@
 </div>
 
 <div class="flex items-center justify-between mt-10 ml-20 px-4 py-2">
-    <div class="flex items-center border rounded-lg px-4 py-2 w-96 ">
-        <input type="text" placeholder="Search..." id="searchbar" class="w-full outline-none focus:ring-0">
-        <button class="text-gray-500 hover:text-gray-700 ml-2">
+    <div class="flex items-center border border-gray-300 rounded-full px-4 py-2 w-96 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+        <input type="text" placeholder="Search..." id="searchbar" class="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400">
+        <button class="text-gray-500 hover:text-gray-700">
             🔍
         </button>
     </div>
+    
 
     <button id="filterBtn" class="text-gray-500 hover:text-gray-700 mr-40 relative group">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -104,6 +102,10 @@
     let selectedTaskId = '';
     const API_URLS = "http://127.0.0.1:8000"
 
+    document.getElementById("profileicon").addEventListener("click",()=>{
+        window.location.href = "/profile"
+    })
+
     const filterBtn = document.getElementById("filterBtn")
     const filterPopup = document.getElementById("filterPopup")
     const closePopup = document.getElementById("closePopup")
@@ -119,12 +121,9 @@
     })
 
     // signout button
-    document.getElementById("signOutBtn").addEventListener("click", function () {
-        window.location.href = "/login"
-    })
-
-
-
+    // document.getElementById("signOutBtn").addEventListener("click", function () {
+    //     window.location.href = "/login"
+    // })
 
     // FITER BASED ON DATE RANGE
     const saveFilter = document.getElementById("saveFilter")
@@ -150,6 +149,9 @@
 
     function updateGreeting() {
         const greetingElement = document.getElementById("greeting")
+        const firstname = localStorage.getItem("firstname")
+        console.log("firstname----->",firstname)
+
         const now = new Date()
         const hours = now.getHours()
         let greetingText = "Good Morning"
@@ -160,7 +162,7 @@
             greetingText = "Good Evening";
         }
 
-        greetingElement.innerHTML = `Hi, ${greetingText} Avinash <span class="mr-2">👋</span>`
+        greetingElement.innerHTML = `Hi, ${greetingText} ${firstname}! <span class="mr-2">👋</span>`
     }
 
     document.addEventListener("DOMContentLoaded", updateGreeting)
