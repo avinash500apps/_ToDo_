@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from backend.routers import routers
+from backend.routers import routers,profilerouters
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.include_router(routers.router)
+app.include_router(profilerouters.router)
 
 app.add_middleware(
     CORSMiddleware,
