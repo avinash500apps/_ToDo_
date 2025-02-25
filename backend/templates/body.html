@@ -120,10 +120,6 @@
         }
     })
 
-    // signout button
-    // document.getElementById("signOutBtn").addEventListener("click", function () {
-    //     window.location.href = "/login"
-    // })
 
     // FITER BASED ON DATE RANGE
     const saveFilter = document.getElementById("saveFilter")
@@ -150,7 +146,6 @@
     function updateGreeting() {
         const greetingElement = document.getElementById("greeting")
         const firstname = localStorage.getItem("firstname")
-        console.log("firstname----->",firstname)
 
         const now = new Date()
         const hours = now.getHours()
@@ -162,7 +157,7 @@
             greetingText = "Good Evening";
         }
 
-        greetingElement.innerHTML = `Hi, ${greetingText} ${firstname}! <span class="mr-2">👋</span>`
+        greetingElement.innerHTML = `${greetingText},${firstname}! ✨ Welcome to Todo`
     }
 
     document.addEventListener("DOMContentLoaded", updateGreeting)

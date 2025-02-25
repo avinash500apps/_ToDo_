@@ -25,18 +25,6 @@ def home(request: Request):
 def home(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-# @router.post("/login")
-# async def login(payload: LoginRequest):
-#     user = users_collection.find_one({"email": payload.email})
-
-#     if not user or not verify_password(payload.password, user["password"]):
-#         raise HTTPException(status_code=400, detail="Invalid email or password")
-
-#     access_token = create_access_token(data={"email": user["email"]})
-#     firstname = user.get("first_name")
-#     email=user.get("email")
-#     return {"access_token": access_token, "firstname": firstname ,"email":email, "message": "Login successful"}
-
 @router.post("/login")
 async def login(payload: LoginRequest, response: Response):
     user = users_collection.find_one({"email": payload.email})

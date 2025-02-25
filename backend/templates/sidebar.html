@@ -11,20 +11,26 @@
 <body class="flex h-screen bg-gray-100">
     <div class="flex flex-row w-full">
         <div class="w-96 bg-blue-900 text-white flex flex-col p-5 space-y-4">
-            <h2 class="text-xl mt-5 font-bold">Private</h2>
-            <nav class="flex flex-col space-y-2">
-                <ul id="list-container" class="space-y-2"></ul>
 
+            <div class="flex justify-center mb-2">
+               
+                    {% include "logo.html" %}
+            </div>
+
+            <h2 class="text-xl mt-2 font-bold">_TODO_ Categories</h2>
                 <!-- Input field to add a new list -->
                 <div class="flex items-center">
-                    <input id="new-list-input" type="text" placeholder="  +  Create new list"
+                    <input id="new-list-input" type="text" placeholder="  +  Create new Category"
                         class="rounded-lg h-10 py-2 px-4 flex-1 text-black">
                     <button id="add-list-btn" class="ml-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-800"
                         onclick="addItem()">
                         ➕
                     </button>
                 </div>
-            </nav>
+                <h2 class="text-xl mt-5 font-bold">Categories</h2>
+                <nav class="flex flex-col space-y-2">
+                    <ul id="list-container" class="space-y-2"></ul>
+                </nav>
             <div class="mb-10">
                 <h2 class="text-xl font-bold mt-5">Group</h2>
                 <nav class="flex flex-col space-y-2 mt-5">
