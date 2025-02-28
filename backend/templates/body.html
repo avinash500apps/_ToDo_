@@ -288,6 +288,7 @@
     async function fetchTasks() {
         try {
             let response = await fetch(`${API_URLS}/categories/`)
+            console.log("response--------",response)
             let data = await response.json()
             populateTable(data.data)
             return data
@@ -318,6 +319,13 @@
             populateTable(filteredTasks)
         })
     }
+
+    window.addEventListener("message", (event) => {
+        if (event.data.action === "updateTaskTable") { 
+            console.log("✅ Received updated tasks in body.html:", event.data.tasks)
+            populateTable(event.data.tasks)
+        }
+    })
 
     function populateTable(data) {
         let table = document.getElementById("tableData")
@@ -426,7 +434,7 @@
 
     //   code for selecting options using API
     function fetchCategories() {
-        fetch(`${API_URL}/tasks/`)
+        fetch(`${API_URLS}/tasks/`)
             .then(response => response.json())
             .then(data => {
                 const categorySelect = document.getElementById('category')
@@ -445,6 +453,7 @@
                 console.error('Error fetching categories:', error)
             })
     }
+
 </script>
 </body>
 
