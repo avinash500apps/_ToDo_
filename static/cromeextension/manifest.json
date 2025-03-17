@@ -6,16 +6,18 @@
   "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
-      "service_worker": "static/background.js"
+      "service_worker": "background.js",
+      "type": "module"
   },
   "action": {
-      "default_popup": "static/popup.html",
-      "default_icon": "static/images/download.png"
+      "default_popup": "popup.html",
+      "default_icon": "download.png"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["static/content.js"]
+      "js": ["poup.js"],
+      "type": "module"
     }
   ]
 }

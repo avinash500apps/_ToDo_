@@ -1,6 +1,4 @@
-// chrome.runtime.sendMessage({ action: "fetchTasks" }, (response) => {
-//     console.log("Received from background:", response.tasks);
-// });
+
 
 // Listen for messages from `background.js`
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
